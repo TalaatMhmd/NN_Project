@@ -1,27 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import pandas as pd 
 import cv2
 import os
 from xml.etree import ElementTree
 from matplotlib import pyplot as plt
-
-
-# In[5]:
-
-
 import tensorflow as tf
 from sklearn.metrics import confusion_matrix
 from tensorflow.keras import datasets, layers, models
 keras = tf.keras
-
-
-# In[3]:
 
 
 class_names = ['person','person-like']
@@ -30,8 +16,6 @@ class_names_label = {class_name:i for i, class_name in enumerate(class_names)}
 n_classes = 2
 size = (200,200)
 
-
-# In[4]:
 
 
 def load_data():
@@ -77,19 +61,14 @@ def load_data():
     return output
 
 
-# In[6]:
-
 
 (train_images, train_labels),(test_images, test_labels),(val_images, val_labels) = load_data()
 
 
-# In[7]:
 
 
 train_images.shape
 
-
-# In[8]:
 
 
 plt.figure(figsize=(20,20))
@@ -100,8 +79,6 @@ for n , i in enumerate(list(np.random.randint(0,len(train_images),36))) :
     plt.axis('off')
 
 
-# In[13]:
-
 
 model = models.Sequential()
 model.add(layers.Conv2D(16, (3, 3), activation='relu', input_shape=(200, 200, 3)))
@@ -109,38 +86,23 @@ model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(32, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
-
-
-# In[14]:
-
-
 model.add(layers.Flatten())
 model.add(layers.Dense(128, activation='relu'))
 model.add(layers.Dense(2))
-
-
-# In[15]:
-
 
 model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
 
 
-# In[ ]:
-
-
 history = model.fit(train_images, train_labels, epochs=6, 
                     validation_data=(test_images, test_labels))
 
 
-# In[34]:
 
 
 def plot_accuracy_loss(history):
-    """
-        Plot the accuracy and the loss during the training of the nn.
-    """
+    
     fig = plt.figure(figsize=(10,5))
 
     # Plot accuracy
@@ -164,19 +126,16 @@ def plot_accuracy_loss(history):
     plt.show()
 
 
-# In[35]:
 
 
 plot_accuracy_loss(history)
 
 
-# In[36]:
 
 
 preds = model.predict(val_images) 
 
 
-# In[20]:
 
 
 plt.figure(figsize=(20,20))
@@ -188,47 +147,28 @@ for n , i in enumerate(list(np.random.randint(0,len(val_images),36))) :
     plt.title((class_names[x]))
 
 
-# In[21]:
-
 
 result = []
 for i in range(len(preds)):
     result.append(np.argmax(preds[i]))
 
 
-# In[22]:
 
 
 tn, fp, fn, tp = confusion_matrix(val_labels,result).ravel()
 
 
-# In[23]:
 
 
 (tn, fp, fn, tp)
 
 
-# In[24]:
-
 
 model.summary()
 
-
-# In[25]:
 
 
 model.save_weights('C:\\Users\\talaa\\OneDrive\\Desktop\\NN_Pro\\checkpoints\\my_checkpoint')
 
 
-# In[27]:
-
-
-# !mkdir -p saved_model
 model.save("C:\\Users\\talaa\\OneDrive\\Desktop\\NN_Pro\\my_model")
-
-
-# In[ ]:
-
-
-
-
